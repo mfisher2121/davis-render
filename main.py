@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 
-# Import all blueprints
+# Import blueprints
 from blueprints.safety_gate import safety
 from blueprints.gbp_helper import gbp_helper_bp
 from blueprints.domination import domination_bp
@@ -21,11 +21,8 @@ def create_app():
 
     return app
 
-
-# Gunicorn entry point (used by Render)
+# Gunicorn entry point (Render)
 app = create_app()
 
 if __name__ == "__main__":
-    # Local run (debug mode)
     app.run(host="0.0.0.0", port=10000, debug=True)
-
