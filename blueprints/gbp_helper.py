@@ -1,19 +1,23 @@
+# blueprints/gbp_helper.py
 from flask import Blueprint, jsonify, request
 from auth.token_auth import require_auth
 
-gbp_helper_bp = Blueprint("gbp_helper", __name__)
+# export name must match main.py import
+gbp_bp = Blueprint("gbp", __name__)
 
-@gbp_helper_bp.get("/health")
+@g bp_bp.get("/health")
 def health():
-    return jsonify({"ok": True, "service": "gbp_helper"})
+    return jsonify({"ok": True, "service": "gbp"})
 
-@gbp_helper_bp.post("/validate/advanced")
+# Example placeholder endpoint: GBP post preview
+@g bp_bp.post("/posts/preview")
 @require_auth
-def advanced():
+def preview_post():
     data = request.get_json(silent=True) or {}
-    body = (data.get("post_body") or "").lower()
-    flags = {
-        "has_city": any(tag in body for tag in data.get("cities", [])),
-        "has_cta": any(kw in body for kw in ["call", "schedule", "book", "get a quote"])
+    # pretend we build a GBP post payload
+    post = {
+        "title": data.get("title", "Untitled"),
+        "body": data.get("body", "")[:1500],
+        "utm": data.get("utm", {"source": "gbp", "medium": "post"})
     }
-    return jsonify({"passed": all(flags.values()), "flags": flags})
+    return jsonify({"ok": True, "post": post})

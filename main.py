@@ -2,15 +2,15 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-# --- BLUEPRINT IMPORTS (one of each, no dupes) ---
+# --- BLUEPRINT IMPORTS ---
+# (adjust names on right if files export different variables)
 from blueprints.safety_gate import safety as safety_bp        # /api/safety-gate/...
 from blueprints.domination import domination_bp               # /api/domination/...
 from blueprints.authority import authority_bp                 # /api/authority/...
-from blueprints.gbp_helper import gbp_bp                      # /api/gbp/...
+from blueprints.gbp_helper import gbp as gbp_bp               # /api/gbp/...  <-- fixed import
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    # allow n8n / local testing to hit your APIs
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # ---------- ROOT + HEALTH ----------
@@ -22,7 +22,7 @@ def create_app() -> Flask:
     def health():
         return jsonify({"ok": True})
 
-    # ---------- BLUEPRINTS (one of each, no dupes) ----------
+    # ---------- BLUEPRINTS ----------
     app.register_blueprint(safety_bp,     url_prefix="/api/safety-gate")
     app.register_blueprint(domination_bp, url_prefix="/api/domination")
     app.register_blueprint(authority_bp,  url_prefix="/api/authority")
@@ -56,9 +56,10 @@ def create_app() -> Flask:
 
     return app
 
+
 # gunicorn entrypoint
 app = create_app()
 
-# local dev
+# local dev runner
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
