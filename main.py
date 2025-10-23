@@ -2,15 +2,15 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-# --- BLUEPRINT IMPORTS ---
-# adjust the right-hand names if your files export different variables
-from blueprints.safety_gate import safety as safety_bp              # /api/safety-gate/...
+# --- BLUEPRINT IMPORTS (one of each, no dupes) ---
+from blueprints.safety_gate import safety as safety_bp        # /api/safety-gate/...
 from blueprints.domination import domination_bp               # /api/domination/...
 from blueprints.authority import authority_bp                 # /api/authority/...
 from blueprints.gbp_helper import gbp_bp                      # /api/gbp/...
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    # allow n8n / local testing to hit your APIs
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # ---------- ROOT + HEALTH ----------
@@ -22,13 +22,13 @@ def create_app() -> Flask:
     def health():
         return jsonify({"ok": True})
 
-    # ---------- BLUEPRINTS ----------
+    # ---------- BLUEPRINTS (one of each, no dupes) ----------
     app.register_blueprint(safety_bp,     url_prefix="/api/safety-gate")
     app.register_blueprint(domination_bp, url_prefix="/api/domination")
     app.register_blueprint(authority_bp,  url_prefix="/api/authority")
     app.register_blueprint(gbp_bp,        url_prefix="/api/gbp")
 
-    # ---------- TEMPORARY DEBUG: SHOW REGISTERED ROUTES ----------
+    # ---------- TEMP DEBUG: list all routes ----------
     @app.get("/routes")
     def routes():
         return jsonify(sorted([r.rule for r in app.url_map.iter_rules()]))
